@@ -1,8 +1,15 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Feather } from '@expo/vector-icons';
 import { useNotifications } from '../hooks/useNotifications';
 
-export const NotificationTest: React.FC = () => {
+interface NotificationTestProps {
+  onClose?: () => void;
+}
+
+export const NotificationTest: React.FC<NotificationTestProps> = ({ onClose }) => {
+  const insets = useSafeAreaInsets();
   const {
     expoPushToken,
     notification,
@@ -72,11 +79,23 @@ export const NotificationTest: React.FC = () => {
   };
 
   return (
-    <ScrollView className="flex-1 p-4 bg-gray-50">
-      <View className="bg-white rounded-lg p-4 mb-4 shadow-sm">
-        <Text className="text-xl font-bold text-gray-800 mb-4">
-          Push Notification Test
-        </Text>
+    <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+      {/* Header */}
+      <View className="px-6 py-4 bg-white flex-row items-center">
+        <TouchableOpacity
+          onPress={onClose}
+          className="w-10 h-10 items-center justify-center mr-3"
+        >
+          <Feather name="arrow-left" size={24} color="#374151" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-light text-gray-900">Push Notifications</Text>
+      </View>
+
+      <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
+        <View className="bg-white rounded-lg p-4 mb-4 shadow-sm">
+          <Text className="text-xl font-bold text-gray-800 mb-4">
+            Push Notification Test
+          </Text>
 
         {/* Registration Status */}
         <View className="mb-4">
@@ -210,5 +229,6 @@ export const NotificationTest: React.FC = () => {
         </View>
       </View>
     </ScrollView>
+    </View>
   );
 };
