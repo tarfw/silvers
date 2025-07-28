@@ -27,11 +27,18 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
       "bundler": "metro"
+    },
+    "notification": {
+      "icon": "./assets/silvers.png",
+      "color": "#378388",
+      "androidMode": "default",
+      "androidCollapsedTitle": "New notification"
     },
     "plugins": [
       [
@@ -58,9 +65,9 @@
         "root": "./src/app"
       },
       "eas": {
-        "projectId": "cc294013-1344-4934-8554-0d3cce89d739"
+        "projectId": "6a7a08ba-8bdc-42a9-aa27-b72531749306"
       }
     },
-    "owner": "thamizhaiorg"
+    "owner": "tarsilversapp"
   }
 }
