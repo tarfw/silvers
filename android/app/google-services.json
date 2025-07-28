@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "344375321677",
+    "project_id": "silvers-e6db2",
+    "storage_bucket": "silvers-e6db2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344375321677:android:5a2edfddb3366bcfb22804",
+        "android_client_info": {
+          "package_name": "com.silver.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgO_dbklrZeuUrnFDi45T-I548j9NedPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
