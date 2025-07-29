@@ -11,7 +11,6 @@ export interface NotificationState {
 
 export interface UseNotificationsReturn extends NotificationState {
   registerForNotifications: () => Promise<void>;
-  sendTestNotification: () => Promise<void>;
   sendOrderNotification: (orderData: {
     orderId: string;
     customerName: string;
@@ -61,17 +60,7 @@ export const useNotifications = (): UseNotificationsReturn => {
     }
   }, [updateState]);
 
-  const sendTestNotification = useCallback(async () => {
-    try {
-      updateState({ error: null });
-      await NotificationService.sendTestNotification();
-    } catch (error) {
-      console.error('Failed to send test notification:', error);
-      updateState({ 
-        error: error instanceof Error ? error.message : 'Failed to send test notification'
-      });
-    }
-  }, [updateState]);
+
 
   const sendOrderNotification = useCallback(async (orderData: {
     orderId: string;
@@ -138,7 +127,6 @@ export const useNotifications = (): UseNotificationsReturn => {
   return {
     ...state,
     registerForNotifications,
-    sendTestNotification,
     sendOrderNotification,
     sendInventoryNotification,
     clearError,

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
-import { id } from '@instantdb/react-native';
+import { View, Text, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../lib/auth-context';
@@ -102,67 +101,7 @@ export default function MyOrdersScreen({ onClose, onOrderSelect }: MyOrdersScree
     });
   };
 
-  const createTestOrder = async () => {
-    if (!user?.email) return;
 
-    try {
-      const orderId = id();
-      const orderNumber = 'TEST-' + Date.now().toString().slice(-6);
-
-      const orderData = {
-        orderNumber,
-        referenceId: orderId,
-        createdAt: new Date(),
-        customerEmail: user.email,
-        customerName: 'Test Customer',
-        status: 'completed',
-        fulfillmentStatus: 'fulfilled',
-        paymentStatus: 'paid',
-        subtotal: 50.00,
-        taxAmount: 4.00,
-        shippingAmount: 5.00,
-        total: 59.00,
-      };
-
-      const item1Id = id();
-      const item2Id = id();
-
-      const orderItems = [
-        {
-          id: item1Id,
-          title: 'Test Product 1',
-          quantity: 2,
-          price: 15.00,
-          lineTotal: 30.00,
-          sku: 'TEST-001',
-          variantTitle: 'Medium / Blue',
-          taxAmount: 2.40,
-        },
-        {
-          id: item2Id,
-          title: 'Test Product 2',
-          quantity: 1,
-          price: 20.00,
-          lineTotal: 20.00,
-          sku: 'TEST-002',
-          taxAmount: 1.60,
-        }
-      ];
-
-      await db.transact([
-        db.tx.orders[orderId].update(orderData),
-        ...orderItems.map(item => db.tx.orderitems[item.id].update(item)),
-        ...orderItems.map(item =>
-          db.tx.orders[orderId].link({ orderitems: item.id })
-        )
-      ]);
-
-      Alert.alert('Success', 'Test order with items created!');
-    } catch (error) {
-      console.error('Error creating test order:', error);
-      Alert.alert('Error', 'Failed to create test order');
-    }
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -407,12 +346,7 @@ export default function MyOrdersScreen({ onClose, onOrderSelect }: MyOrdersScree
         >
           <Text className="text-white font-medium">Start Shopping</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={createTestOrder}
-          className="bg-gray-600 px-6 py-3 rounded-xl"
-        >
-          <Text className="text-white font-medium">Create Test Order (Debug)</Text>
-        </TouchableOpacity>
+
       </View>
     </View>
   );

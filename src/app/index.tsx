@@ -20,7 +20,7 @@ import CartScreen from "../components/cart";
 import MyOrdersScreen from "../screens/my-orders";
 import OrderDetailsScreen from "../screens/order-details";
 import { formatCurrency } from "../lib/order-calculations";
-import { NotificationTest } from "../components/NotificationTest";
+
 
 import ErrorBoundary from "../components/ui/error-boundary";
 
@@ -38,8 +38,7 @@ type Screen =
   | 'category'
   | 'product-details'
   | 'my-orders'
-  | 'order-details'
-  | 'notifications-test';
+  | 'order-details';
 
 interface NavigationData {
   categoryId?: string;
@@ -159,7 +158,6 @@ export default function Page() {
           onClose={() => handleNavigate('products')}
           onNavigateToAddresses={() => handleNavigate('address-management')}
           onNavigateToOrders={() => handleNavigate('my-orders')}
-          onNavigateToNotifications={() => handleNavigate('notifications-test')}
         />;
       case 'favorites':
         return <FavoritesScreen
@@ -253,8 +251,7 @@ export default function Page() {
             <Text>Order not found</Text>
           </View>
         );
-      case 'notifications-test':
-        return <NotificationTest onClose={() => handleNavigate('profile')} />;
+
       // All other cases default to products screen
       default:
         return <ProductsScreen

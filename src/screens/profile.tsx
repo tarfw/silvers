@@ -10,10 +10,9 @@ interface ProfileScreenProps {
   onClose?: () => void;
   onNavigateToAddresses?: () => void;
   onNavigateToOrders?: () => void;
-  onNavigateToNotifications?: () => void;
 }
 
-export default function ProfileScreen({ onClose, onNavigateToAddresses, onNavigateToOrders, onNavigateToNotifications }: ProfileScreenProps) {
+export default function ProfileScreen({ onClose, onNavigateToAddresses, onNavigateToOrders }: ProfileScreenProps) {
   const insets = useSafeAreaInsets();
   const { user, peopleaProfile, createPeopleaProfile, updatePeopleaProfile, signOut, linkUserToCustomer } = useAuth();
   
@@ -235,22 +234,7 @@ export default function ProfileScreen({ onClose, onNavigateToAddresses, onNaviga
             </View>
           </TouchableOpacity>
 
-          {/* Push Notifications Test Card */}
-          <TouchableOpacity
-            onPress={onNavigateToNotifications}
-            className="bg-white rounded-2xl p-6 mb-4 shadow-sm"
-          >
-            <View className="flex-row items-center">
-              <View className="w-12 h-12 bg-purple-100 rounded-2xl items-center justify-center mr-4">
-                <Feather name="bell" size={20} color="#8B5CF6" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-lg font-medium text-gray-900">Push Notifications</Text>
-                <Text className="text-gray-500">Test push notifications</Text>
-              </View>
-              <Feather name="chevron-right" size={20} color="#D1D5DB" />
-            </View>
-          </TouchableOpacity>
+
 
           {/* Sign Out Card */}
           <TouchableOpacity

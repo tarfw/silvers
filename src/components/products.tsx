@@ -207,20 +207,21 @@ export default function ProductsScreen({ onClose, onNavigateToCart, onNavigateTo
 
   return (
     <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+      {/* Fixed Hero Section */}
+      <HeroSection
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onNavigateToFavorites={onNavigateToFavorites}
+        favoritesCount={favoritesCount}
+      />
+
+      {/* Scrollable Content */}
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
         bounces={true}
         nestedScrollEnabled={true}
       >
-        {/* Hero Section */}
-        <HeroSection
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onNavigateToFavorites={onNavigateToFavorites}
-          favoritesCount={favoritesCount}
-        />
-
         {/* Promotional Offers Slider */}
         <PromoSlider
           offers={[
@@ -261,9 +262,6 @@ export default function ProductsScreen({ onClose, onNavigateToCart, onNavigateTo
           }}
         />
 
-
-
-
         {/* Products Section */}
         <View className="bg-white flex-1">
           {/* Section Header */}
@@ -290,10 +288,6 @@ export default function ProductsScreen({ onClose, onNavigateToCart, onNavigateTo
         {/* Bottom spacing for navigation */}
         <View className="h-24" />
       </ScrollView>
-
-
-
-
     </View>
   );
 }
