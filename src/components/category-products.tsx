@@ -49,13 +49,13 @@ export default function CategoryProductsScreen({
 
   // Hardcoded categories with images (same as in products.tsx)
   const categories = [
-    { id: 'chuttis', name: 'Chuttis', image: require('../../assets/categories/head2.jpg') },
+    { id: 'anklets', name: 'Anklets', image: require('../../assets/categories/anklets.webp') },
+    { id: 'bracelets', name: 'Bracelets', image: require('../../assets/categories/bracelets.webp') },
+    { id: 'necklaces', name: 'Necklaces', image: require('../../assets/categories/necklace.webp') },
+    { id: 'hipchains', name: 'Hipchains', image: require('../../assets/categories/waistchain.webp') },
     { id: 'earrings', name: 'Earrings', image: require('../../assets/categories/earings.webp') },
     { id: 'noserings', name: 'Nose rings', image: require('../../assets/categories/nose.jpg') },
-    { id: 'necklaces', name: 'Necklaces', image: require('../../assets/categories/necklace.webp') },
-    { id: 'bracelets', name: 'Bracelets', image: require('../../assets/categories/bracelets.webp') },
-    { id: 'hipchains', name: 'Hipchains', image: require('../../assets/categories/waistchain.webp') },
-    { id: 'anklets', name: 'Anklets', image: require('../../assets/categories/anklets.webp') }
+    { id: 'chuttis', name: 'Chuttis', image: require('../../assets/categories/head2.jpg') }
   ];
 
   // Find the current category
@@ -95,7 +95,7 @@ export default function CategoryProductsScreen({
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-gray-50 justify-center items-center" style={{ paddingTop: insets.top }}>
+      <View className="flex-1 bg-white justify-center items-center" style={{ paddingTop: insets.top }}>
         <Text className="text-gray-500">Loading products...</Text>
       </View>
     );
@@ -103,7 +103,7 @@ export default function CategoryProductsScreen({
 
   if (error) {
     return (
-      <View className="flex-1 bg-gray-50 justify-center items-center" style={{ paddingTop: insets.top }}>
+      <View className="flex-1 bg-white justify-center items-center" style={{ paddingTop: insets.top }}>
         <Text className="text-red-500">Error loading products</Text>
         <TouchableOpacity onPress={onClose} className="mt-4 bg-silver-500 px-4 py-2 rounded-full">
           <Text className="text-white font-semibold">Go Back</Text>

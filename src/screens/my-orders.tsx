@@ -352,7 +352,7 @@ export default function MyOrdersScreen({ onClose, onOrderSelect }: MyOrdersScree
   );
 
   return (
-    <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="px-6 py-4 bg-white border-b border-gray-100">
         <View className="flex-row items-center">

@@ -67,13 +67,13 @@ export default function ProductsScreen({ onClose, onNavigateToCart, onNavigateTo
 
   // Hardcoded categories with their images
   const categories = [
-    { id: 'chuttis', name: 'Chuttis', image: require('../../assets/categories/head2.jpg') },
+    { id: 'anklets', name: 'Anklets', image: require('../../assets/categories/anklets.webp') },
+    { id: 'bracelets', name: 'Bracelets', image: require('../../assets/categories/bracelets.webp') },
+    { id: 'necklaces', name: 'Necklaces', image: require('../../assets/categories/necklace.webp') },
+    { id: 'hipchains', name: 'Hipchains', image: require('../../assets/categories/waistchain.webp') },
     { id: 'earrings', name: 'Earrings', image: require('../../assets/categories/earings.webp') },
     { id: 'noserings', name: 'Nose rings', image: require('../../assets/categories/nose.jpg') },
-    { id: 'necklaces', name: 'Necklaces', image: require('../../assets/categories/necklace.webp') },
-    { id: 'bracelets', name: 'Bracelets', image: require('../../assets/categories/bracelets.webp') },
-    { id: 'hipchains', name: 'Hipchains', image: require('../../assets/categories/waistchain.webp') },
-    { id: 'anklets', name: 'Anklets', image: require('../../assets/categories/anklets.webp') }
+    { id: 'chuttis', name: 'Chuttis', image: require('../../assets/categories/head2.jpg') }
   ];
 
   // Log query errors
@@ -206,7 +206,7 @@ export default function ProductsScreen({ onClose, onNavigateToCart, onNavigateTo
 
 
   return (
-    <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Fixed Hero Section */}
       <HeroSection
         searchQuery={searchQuery}

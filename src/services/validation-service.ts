@@ -122,9 +122,9 @@ export class ValidationService {
       if (data.price < 0) {
         errors.price = 'Price cannot be negative';
       } else if (data.price > 999999.99) {
-        errors.price = 'Price cannot exceed $999,999.99';
+        errors.price = 'Price cannot exceed ₹999,999.99';
       } else if (data.price === 0) {
-        warnings.price = 'Price is set to $0.00';
+        warnings.price = 'Price is set to ₹0.00';
       }
     }
 
@@ -133,7 +133,7 @@ export class ValidationService {
       if (data.cost < 0) {
         errors.cost = 'Cost cannot be negative';
       } else if (data.cost > 999999.99) {
-        errors.cost = 'Cost cannot exceed $999,999.99';
+        errors.cost = 'Cost cannot exceed ₹999,999.99';
       }
     }
 
@@ -191,7 +191,7 @@ export class ValidationService {
       if (data.saleprice < 0) {
         errors.saleprice = 'Sale price cannot be negative';
       } else if (data.saleprice > 999999.99) {
-        errors.saleprice = 'Sale price cannot exceed $999,999.99';
+        errors.saleprice = 'Sale price cannot exceed ₹999,999.99';
       }
     }
 

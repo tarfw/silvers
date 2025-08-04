@@ -12,6 +12,7 @@ export interface Address {
   zipCode: string;
   country?: string;
   phone?: string;
+  gst?: string;
   isDefault?: boolean;
   createdAt: Date;
   updatedAt?: Date;
@@ -25,6 +26,7 @@ export interface CreateAddressData {
   zipCode: string;
   country?: string;
   phone?: string;
+  gst?: string;
   isDefault?: boolean;
 }
 
@@ -84,8 +86,9 @@ class AddressService {
         city: addressData.city,
         state: addressData.state,
         zipCode: addressData.zipCode,
-        country: addressData.country || 'United States',
+        country: 'India',
         phone: addressData.phone,
+        gst: addressData.gst,
         isDefault: addressData.isDefault || false,
         createdAt: timestamp,
         updatedAt: timestamp,

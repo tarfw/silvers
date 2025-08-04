@@ -352,7 +352,7 @@ export const validationRules = {
         return 'Please enter a valid price';
       }
       if (num > 999999.99) {
-        return 'Price cannot exceed $999,999.99';
+        return 'Price cannot exceed ₹999,999.99';
       }
       return null;
     },

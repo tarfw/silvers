@@ -3,7 +3,7 @@
 import { i } from "@instantdb/react-native";
 
 const _schema = i.schema({
-  // We inferred 9 attributes!
+  // We inferred 8 attributes!
   // Take a look at this schema, and if everything looks good,
   // run `push schema` again to enforce the types.
   entities: {
@@ -18,6 +18,7 @@ const _schema = i.schema({
       city: i.string(),
       country: i.string().optional(),
       createdAt: i.date(),
+      gst: i.string().optional(),
       isDefault: i.boolean().optional(),
       name: i.string(),
       phone: i.string().optional(),
@@ -72,6 +73,11 @@ const _schema = i.schema({
       totalOrders: i.number().optional(),
       totalSpent: i.number().optional(),
       updatedAt: i.date().optional(),
+    }),
+    favorites: i.entity({
+      createdAt: i.date().indexed(),
+      productId: i.string().indexed(),
+      userId: i.string().indexed(),
     }),
     files: i.entity({
       alt: i.string().optional(),
@@ -370,11 +376,6 @@ const _schema = i.schema({
     vendors: i.entity({
       name: i.string().unique().indexed(),
     }),
-    favorites: i.entity({
-      createdAt: i.date().indexed(),
-      productId: i.string().indexed(),
-      userId: i.string().indexed(),
-    }),
   },
   links: {
     cart$users: {
@@ -423,6 +424,30 @@ const _schema = i.schema({
         on: "orders",
         has: "one",
         label: "customer",
+      },
+    },
+    favorites$users: {
+      forward: {
+        on: "favorites",
+        has: "one",
+        label: "$users",
+      },
+      reverse: {
+        on: "$users",
+        has: "many",
+        label: "favorites",
+      },
+    },
+    favoritesProduct: {
+      forward: {
+        on: "favorites",
+        has: "one",
+        label: "product",
+      },
+      reverse: {
+        on: "products",
+        has: "many",
+        label: "favorites",
       },
     },
     files$users: {
@@ -579,30 +604,6 @@ const _schema = i.schema({
         on: "items",
         has: "one",
         label: "product",
-      },
-    },
-    favorites$users: {
-      forward: {
-        on: "favorites",
-        has: "one",
-        label: "$users",
-      },
-      reverse: {
-        on: "$users",
-        has: "many",
-        label: "favorites",
-      },
-    },
-    favoritesProduct: {
-      forward: {
-        on: "favorites",
-        has: "one",
-        label: "product",
-      },
-      reverse: {
-        on: "products",
-        has: "many",
-        label: "favorites",
       },
     },
   },

@@ -43,7 +43,7 @@ export default function AddressSelector({
     const parts = [
       address.street,
       `${address.city}, ${address.state} ${address.zipCode}`,
-      address.country || 'United States'
+      address.country || 'India'
     ].filter(Boolean);
 
     return parts.join('\n');
@@ -61,7 +61,7 @@ export default function AddressSelector({
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+      <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
         {/* Header */}
         <View className="bg-white px-4 py-4 border-b border-gray-200">
           <View className="flex-row items-center justify-between">
@@ -77,7 +77,7 @@ export default function AddressSelector({
           </View>
         </View>
 
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
           <View className="px-4 py-4">
             {isLoading ? (
               <View className="py-12">
@@ -108,23 +108,36 @@ export default function AddressSelector({
                 <TouchableOpacity
                   key={index}
                   onPress={() => handleSelectAddress(address)}
-                  className={`bg-white rounded-xl p-4 mb-3 border-2 ${
-                    isAddressSelected(address) ? 'border-blue-500' : 'border-gray-200'
+                  className={`bg-white border rounded-xl p-4 mb-3 ${
+                    isAddressSelected(address) ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
                   }`}
                 >
-                  <View className="flex-row items-start justify-between">
+                  <View className="flex-row items-start justify-between mb-3">
                     <View className="flex-1">
-                      <Text className="text-lg font-semibold text-gray-900 mb-1">
-                        {address.firstName} {address.lastName}
+                      <Text className="text-base font-semibold text-gray-900 mb-2">
+                        {address.name}
                       </Text>
-                      {address.company && (
-                        <Text className="text-sm text-gray-600 mb-1">{address.company}</Text>
-                      )}
-                      <Text className="text-sm text-gray-700 leading-5">
-                        {formatAddress(address)}
+                      <Text className="text-sm text-gray-700 leading-5 mb-2">
+                        {address.street}
+                      </Text>
+                      <Text className="text-sm text-gray-700 mb-2">
+                        {address.city}, {address.state} - {address.zipCode}
+                      </Text>
+                      <Text className="text-sm text-gray-700 mb-2">
+                        {address.country || 'India'}
                       </Text>
                       {address.phone && (
-                        <Text className="text-sm text-gray-600 mt-1">{address.phone}</Text>
+                        <Text className="text-sm text-gray-600 mb-2">
+                          📞 {address.phone}
+                        </Text>
+                      )}
+                      {address.gst && (
+                        <View className="bg-blue-50 px-3 py-2 rounded-lg mt-2">
+                          <Text className="text-xs text-blue-600 font-medium mb-1">GST Number</Text>
+                          <Text className="text-sm text-blue-800 font-mono">
+                            {address.gst}
+                          </Text>
+                        </View>
                       )}
                     </View>
                     
@@ -138,23 +151,18 @@ export default function AddressSelector({
                       )}
                     </View>
                   </View>
+                  
+                  {address.isDefault && (
+                    <View className="flex-row justify-end">
+                      <View className="bg-green-100 px-2 py-1 rounded-full">
+                        <Text className="text-xs font-medium text-green-800">Default</Text>
+                      </View>
+                    </View>
+                  )}
                 </TouchableOpacity>
               ))
             )}
           </View>
-
-          {/* Add New Address Button */}
-          {addresses.length > 0 && (
-            <View className="px-4 pb-6">
-              <TouchableOpacity
-                onPress={onAddNewAddress}
-                className="bg-white rounded-xl p-4 border-2 border-dashed border-gray-300 items-center"
-              >
-                <Feather name="plus" size={24} color="#6B7280" />
-                <Text className="text-gray-600 font-medium mt-2">Add New Address</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </ScrollView>
       </View>
     </Modal>

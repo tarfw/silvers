@@ -93,7 +93,7 @@ jest.mock('../lib/instant', () => ({
       signOut: jest.fn(),
     },
   },
-  formatCurrency: (amount: number) => `$${amount.toFixed(2)}`,
+  formatCurrency: (amount: number) => `₹${amount.toFixed(2)}`,
   getCurrentTimestamp: () => Date.now(),
 }));
 

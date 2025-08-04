@@ -140,7 +140,7 @@ export default function ProfileScreen({ onClose, onNavigateToAddresses, onNaviga
   };
 
   return (
-    <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Minimal Header */}
       <View className="px-6 py-4 bg-white">
         <Text className="text-2xl font-light text-gray-900">Profile</Text>

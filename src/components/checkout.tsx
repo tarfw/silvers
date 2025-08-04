@@ -110,7 +110,7 @@ export default function CheckoutScreen({
         state: selectedAddress.state,
         zip: selectedAddress.zipCode,
         zipCode: selectedAddress.zipCode,
-        country: selectedAddress.country || 'United States',
+        country: selectedAddress.country || 'India',
         phone: selectedAddress.phone
       };
 
@@ -125,7 +125,7 @@ export default function CheckoutScreen({
         status: 'pending',
         fulfillmentStatus: 'unfulfilled',
         paymentStatus: 'pending',
-        currency: 'USD',
+        currency: 'INR',
         subtotal: totals.subtotal,
         taxAmount: totals.tax,
         shippingAmount: totals.shipping,
@@ -196,7 +196,7 @@ export default function CheckoutScreen({
   };
 
   return (
-    <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="bg-white px-4 py-4 border-b border-gray-200">
         <View className="flex-row items-center justify-between">
@@ -208,10 +208,10 @@ export default function CheckoutScreen({
         </View>
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
         <View className="px-4 py-6">
           {/* Delivery Address Section */}
-          <View className="bg-white rounded-xl p-4 mb-4">
+          <View className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-lg font-semibold text-gray-900">Delivery Address</Text>
               <TouchableOpacity onPress={onAddressSelect}>
@@ -222,16 +222,41 @@ export default function CheckoutScreen({
             </View>
 
             {selectedAddress ? (
-              <View className="bg-gray-50 rounded-lg p-3">
-                <Text className="text-base font-medium text-gray-900 mb-1">
-                  {selectedAddress.name}
-                </Text>
-                <Text className="text-sm text-gray-700">
-                  {formatAddress(selectedAddress)}
-                </Text>
-                {selectedAddress.phone && (
-                  <Text className="text-sm text-gray-600 mt-1">{selectedAddress.phone}</Text>
-                )}
+              <View className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                <View className="flex-row items-start justify-between mb-3">
+                  <View className="flex-1">
+                    <Text className="text-base font-semibold text-gray-900 mb-2">
+                      {selectedAddress.name}
+                    </Text>
+                    <Text className="text-sm text-gray-700 leading-5 mb-2">
+                      {selectedAddress.street}
+                    </Text>
+                    <Text className="text-sm text-gray-700 mb-2">
+                      {selectedAddress.city}, {selectedAddress.state} - {selectedAddress.zipCode}
+                    </Text>
+                    <Text className="text-sm text-gray-700 mb-2">
+                      {selectedAddress.country || 'India'}
+                    </Text>
+                    {selectedAddress.phone && (
+                      <Text className="text-sm text-gray-600 mb-2">
+                        📞 {selectedAddress.phone}
+                      </Text>
+                    )}
+                    {selectedAddress.gst && (
+                      <View className="bg-blue-50 px-3 py-2 rounded-lg mt-2">
+                        <Text className="text-xs text-blue-600 font-medium mb-1">GST Number</Text>
+                        <Text className="text-sm text-blue-800 font-mono">
+                          {selectedAddress.gst}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  {selectedAddress.isDefault && (
+                    <View className="bg-green-100 px-2 py-1 rounded-full ml-3">
+                      <Text className="text-xs font-medium text-green-800">Default</Text>
+                    </View>
+                  )}
+                </View>
               </View>
             ) : (
               <TouchableOpacity
@@ -245,7 +270,7 @@ export default function CheckoutScreen({
           </View>
 
           {/* Order Summary */}
-          <View className="bg-white rounded-xl p-4 mb-4">
+          <View className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
             <Text className="text-lg font-semibold text-gray-900 mb-4">Order Summary</Text>
             
             {cartItems.map((item) => (
@@ -284,7 +309,7 @@ export default function CheckoutScreen({
           </View>
 
           {/* Payment Method (Placeholder) */}
-          <View className="bg-white rounded-xl p-4 mb-6">
+          <View className="bg-white border border-gray-200 rounded-xl p-4 mb-6">
             <Text className="text-lg font-semibold text-gray-900 mb-4">Payment Method</Text>
             <View className="flex-row items-center">
               <View className="w-10 h-6 bg-blue-600 rounded mr-3 items-center justify-center">
@@ -297,7 +322,10 @@ export default function CheckoutScreen({
       </ScrollView>
 
       {/* Place Order Button */}
-      <View className="bg-white border-t border-gray-200 px-4 py-4">
+      <View 
+        className="bg-white border-t border-gray-200 px-4 py-4"
+        style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+      >
         <TouchableOpacity
           onPress={handlePlaceOrder}
           disabled={isLoading || !selectedAddress}

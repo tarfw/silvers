@@ -107,7 +107,7 @@ export default function AddressManagementScreen({
 
 
   return (
-    <View className="flex-1 bg-gray-50" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="bg-white px-4 py-4 border-b border-gray-200">
         <View className="flex-row items-center justify-between">
@@ -158,26 +158,37 @@ export default function AddressManagementScreen({
               <View key={address.id} className="bg-white rounded-xl p-4 mb-3 border border-gray-200">
                 <View className="flex-row items-start justify-between mb-3">
                   <View className="flex-1">
-                    <View className="flex-row items-center mb-2">
-                      <Text className="text-lg font-semibold text-gray-900">
-                        {address.firstName} {address.lastName}
-                      </Text>
-                      {defaultAddressId === address.id && (
-                        <View className="ml-2 bg-green-100 px-2 py-1 rounded-full">
-                          <Text className="text-xs font-medium text-green-800">Default</Text>
-                        </View>
-                      )}
-                    </View>
-                    {address.company && (
-                      <Text className="text-sm text-gray-600 mb-1">{address.company}</Text>
-                    )}
-                    <Text className="text-sm text-gray-700 leading-5">
-                      {formatAddress(address)}
+                    <Text className="text-base font-semibold text-gray-900 mb-2">
+                      {address.name}
+                    </Text>
+                    <Text className="text-sm text-gray-700 leading-5 mb-2">
+                      {address.street}
+                    </Text>
+                    <Text className="text-sm text-gray-700 mb-2">
+                      {address.city}, {address.state} - {address.zipCode}
+                    </Text>
+                    <Text className="text-sm text-gray-700 mb-2">
+                      {address.country || 'India'}
                     </Text>
                     {address.phone && (
-                      <Text className="text-sm text-gray-600 mt-1">{address.phone}</Text>
+                      <Text className="text-sm text-gray-600 mb-2">
+                        📞 {address.phone}
+                      </Text>
+                    )}
+                    {address.gst && (
+                      <View className="bg-blue-50 px-3 py-2 rounded-lg mt-2">
+                        <Text className="text-xs text-blue-600 font-medium mb-1">GST Number</Text>
+                        <Text className="text-sm text-blue-800 font-mono">
+                          {address.gst}
+                        </Text>
+                      </View>
                     )}
                   </View>
+                  {defaultAddressId === address.id && (
+                    <View className="bg-green-100 px-2 py-1 rounded-full ml-3">
+                      <Text className="text-xs font-medium text-green-800">Default</Text>
+                    </View>
+                  )}
                 </View>
 
                 <View className="flex-row items-center justify-between pt-3 border-t border-gray-100">
@@ -216,17 +227,7 @@ export default function AddressManagementScreen({
         <View className="h-8" />
       </ScrollView>
 
-      {/* Floating Add Button */}
-      {addresses.length > 0 && (
-        <View className="absolute bottom-6 right-6">
-          <TouchableOpacity
-            onPress={onAddAddress}
-            className="w-14 h-14 bg-blue-600 rounded-full items-center justify-center shadow-lg"
-          >
-            <Feather name="plus" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-      )}
+
     </View>
   );
 }

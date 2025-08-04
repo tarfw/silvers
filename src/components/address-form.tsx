@@ -24,8 +24,9 @@ export default function AddressForm({ onClose, onSave, address, isEditing = fals
     city: '',
     state: '',
     zipCode: '',
-    country: 'United States',
+    country: 'India',
     phone: '',
+    gst: '',
     isDefault: false
   });
 
@@ -38,8 +39,9 @@ export default function AddressForm({ onClose, onSave, address, isEditing = fals
         city: address.city || '',
         state: address.state || '',
         zipCode: address.zipCode || '',
-        country: address.country || 'United States',
+        country: 'India', // Always set to India
         phone: address.phone || '',
+        gst: address.gst || '',
         isDefault: address.isDefault || false
       });
     }
@@ -50,6 +52,12 @@ export default function AddressForm({ onClose, onSave, address, isEditing = fals
 
     if (!formData.name?.trim()) {
       newErrors.name = 'Full name is required';
+    }
+
+    if (!formData.phone?.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
+      newErrors.phone = 'Please enter a valid phone number';
     }
 
     if (!formData.street?.trim()) {
@@ -68,13 +76,8 @@ export default function AddressForm({ onClose, onSave, address, isEditing = fals
       newErrors.zipCode = 'ZIP code is required';
     }
 
-    if (!formData.country?.trim()) {
-      newErrors.country = 'Country is required';
-    }
-
-    // Validate phone if provided
-    if (formData.phone && !/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/[\s\-\(\)]/g, ''))) {
-      newErrors.phone = 'Please enter a valid phone number';
+    if (!formData.gst?.trim()) {
+      newErrors.gst = 'GST number is required';
     }
 
     setErrors(newErrors);
@@ -111,6 +114,7 @@ export default function AddressForm({ onClose, onSave, address, isEditing = fals
         zipCode: formData.zipCode,
         country: formData.country,
         phone: formData.phone,
+        gst: formData.gst,
         isDefault: formData.isDefault,
       };
 
@@ -141,125 +145,293 @@ export default function AddressForm({ onClose, onSave, address, isEditing = fals
     }
   };
 
-  const renderInput = (
-    field: keyof Address,
-    label: string,
-    placeholder: string,
-    options?: {
-      multiline?: boolean;
-      keyboardType?: 'default' | 'email-address' | 'phone-pad';
-      autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-      required?: boolean;
-    }
-  ) => {
-    const hasError = !!errors[field];
-    
-    return (
-      <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-2">
-          {label}
-          {options?.required && <Text className="text-red-500"> *</Text>}
-        </Text>
-        <TextInput
-          value={formData[field] || ''}
-          onChangeText={(text) => updateField(field, text)}
-          placeholder={placeholder}
-          multiline={options?.multiline}
-          numberOfLines={options?.multiline ? 3 : 1}
-          keyboardType={options?.keyboardType || 'default'}
-          autoCapitalize={options?.autoCapitalize || 'words'}
-          className={`w-full px-4 py-3 bg-white rounded-lg text-base border ${
-            hasError ? 'border-red-300' : 'border-gray-200'
-          }`}
-          style={{ fontSize: 16, textAlignVertical: options?.multiline ? 'top' : 'center' }}
-        />
-        {hasError && (
-          <Text className="text-red-500 text-sm mt-1">{errors[field]}</Text>
-        )}
-      </View>
-    );
-  };
+
 
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-gray-50"
-      style={{ paddingTop: insets.top }}
+      style={{ flex: 1, backgroundColor: 'white', paddingTop: insets.top }}
     >
       {/* Header */}
-      <View className="bg-white px-4 py-4 border-b border-gray-200">
-        <View className="flex-row items-center justify-between">
-          <TouchableOpacity onPress={onClose} className="mr-4">
+      <View style={{ 
+        backgroundColor: 'white', 
+        paddingHorizontal: 16, 
+        paddingVertical: 16, 
+        borderBottomWidth: 1, 
+        borderBottomColor: '#E5E7EB' 
+      }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <TouchableOpacity onPress={onClose} style={{ marginRight: 16 }}>
             <Feather name="x" size={24} color="#374151" />
           </TouchableOpacity>
-          <Text className="text-xl font-bold text-gray-900 flex-1">
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#111827', flex: 1 }}>
             {isEditing ? 'Edit Address' : 'Add Address'}
           </Text>
           <TouchableOpacity 
             onPress={handleSave} 
             disabled={isLoading}
-            className={`px-4 py-2 rounded-lg ${isLoading ? 'bg-gray-300' : 'bg-blue-600'}`}
+            style={{
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 8,
+              backgroundColor: isLoading ? '#D1D5DB' : '#3B82F6'
+            }}
           >
-            <Text className={`font-medium ${isLoading ? 'text-gray-500' : 'text-white'}`}>
+            <Text style={{ 
+              fontWeight: '500', 
+              color: isLoading ? '#6B7280' : 'white' 
+            }}>
               {isLoading ? 'Saving...' : 'Save'}
             </Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-4 py-6">
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <View style={{ padding: 16 }}>
           {/* Personal Information */}
-          <View className="mb-6">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">Contact Information</Text>
+          <View style={{ marginBottom: 24 }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 16 }}>
+              Contact Information
+            </Text>
 
-            {renderInput('name', 'Full Name', 'John Doe', { required: true })}
-            {renderInput('phone', 'Phone', '+1 (555) 123-4567', { keyboardType: 'phone-pad' })}
+            <View style={{ marginBottom: 16 }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                Full Name <Text style={{ color: '#EF4444' }}> *</Text>
+              </Text>
+              <TextInput
+                value={formData.name}
+                onChangeText={(text) => updateField('name', text)}
+                placeholder="John Doe"
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  backgroundColor: 'white',
+                  borderRadius: 8,
+                  fontSize: 16,
+                  borderWidth: 1,
+                  borderColor: errors.name ? '#FCA5A5' : '#E5E7EB'
+                }}
+              />
+              {errors.name && (
+                <Text style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.name}</Text>
+              )}
+            </View>
+
+            <View style={{ marginBottom: 16 }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                Phone <Text style={{ color: '#EF4444' }}> *</Text>
+              </Text>
+              <TextInput
+                value={formData.phone}
+                onChangeText={(text) => updateField('phone', text)}
+                placeholder="+91 98765 43210"
+                keyboardType="phone-pad"
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  backgroundColor: 'white',
+                  borderRadius: 8,
+                  fontSize: 16,
+                  borderWidth: 1,
+                  borderColor: errors.phone ? '#FCA5A5' : '#E5E7EB'
+                }}
+              />
+              {errors.phone && (
+                <Text style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.phone}</Text>
+              )}
+            </View>
           </View>
 
           {/* Address Information */}
-          <View className="mb-6">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">Address Information</Text>
+          <View style={{ marginBottom: 24 }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 16 }}>
+              Address Information
+            </Text>
 
-            {renderInput('street', 'Street Address', '123 Main Street', { required: true })}
+            <View style={{ marginBottom: 16 }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                Street Address <Text style={{ color: '#EF4444' }}> *</Text>
+              </Text>
+              <TextInput
+                value={formData.street}
+                onChangeText={(text) => updateField('street', text)}
+                placeholder="123 Main Street"
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  backgroundColor: 'white',
+                  borderRadius: 8,
+                  fontSize: 16,
+                  borderWidth: 1,
+                  borderColor: errors.street ? '#FCA5A5' : '#E5E7EB'
+                }}
+              />
+              {errors.street && (
+                <Text style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.street}</Text>
+              )}
+            </View>
 
-            <View className="flex-row gap-3">
-              <View className="flex-1">
-                {renderInput('city', 'City', 'New York', { required: true })}
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <View style={{ flex: 1 }}>
+                <View style={{ marginBottom: 16 }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                    City <Text style={{ color: '#EF4444' }}> *</Text>
+                  </Text>
+                  <TextInput
+                    value={formData.city}
+                    onChangeText={(text) => updateField('city', text)}
+                    placeholder="Mumbai"
+                    style={{
+                      width: '100%',
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
+                      backgroundColor: 'white',
+                      borderRadius: 8,
+                      fontSize: 16,
+                      borderWidth: 1,
+                      borderColor: errors.city ? '#FCA5A5' : '#E5E7EB'
+                    }}
+                  />
+                  {errors.city && (
+                    <Text style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.city}</Text>
+                  )}
+                </View>
               </View>
-              <View className="flex-1">
-                {renderInput('state', 'State', 'NY', { required: true, autoCapitalize: 'characters' })}
+              <View style={{ flex: 1 }}>
+                <View style={{ marginBottom: 16 }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                    State <Text style={{ color: '#EF4444' }}> *</Text>
+                  </Text>
+                  <TextInput
+                    value={formData.state}
+                    onChangeText={(text) => updateField('state', text)}
+                    placeholder="Maharashtra"
+                    autoCapitalize="characters"
+                    style={{
+                      width: '100%',
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
+                      backgroundColor: 'white',
+                      borderRadius: 8,
+                      fontSize: 16,
+                      borderWidth: 1,
+                      borderColor: errors.state ? '#FCA5A5' : '#E5E7EB'
+                    }}
+                  />
+                  {errors.state && (
+                    <Text style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.state}</Text>
+                  )}
+                </View>
               </View>
             </View>
 
-            <View className="flex-row gap-3">
-              <View className="flex-1">
-                {renderInput('zipCode', 'ZIP Code', '10001', { required: true, autoCapitalize: 'characters' })}
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <View style={{ flex: 1 }}>
+                <View style={{ marginBottom: 16 }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                    ZIP Code <Text style={{ color: '#EF4444' }}> *</Text>
+                  </Text>
+                  <TextInput
+                    value={formData.zipCode}
+                    onChangeText={(text) => updateField('zipCode', text)}
+                    placeholder="400001"
+                    autoCapitalize="characters"
+                    style={{
+                      width: '100%',
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
+                      backgroundColor: 'white',
+                      borderRadius: 8,
+                      fontSize: 16,
+                      borderWidth: 1,
+                      borderColor: errors.zipCode ? '#FCA5A5' : '#E5E7EB'
+                    }}
+                  />
+                  {errors.zipCode && (
+                    <Text style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.zipCode}</Text>
+                  )}
+                </View>
               </View>
-              <View className="flex-1">
-                {renderInput('country', 'Country', 'United States', { required: true })}
+              <View style={{ flex: 1 }}>
+                <View style={{ marginBottom: 16 }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                    Country
+                  </Text>
+                  <View style={{
+                    width: '100%',
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    backgroundColor: '#F3F4F6',
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor: '#E5E7EB',
+                    justifyContent: 'center'
+                  }}>
+                    <Text style={{ fontSize: 16, color: '#374151' }}>India</Text>
+                  </View>
+                </View>
               </View>
+            </View>
+
+            {/* GST Number */}
+            <View style={{ marginBottom: 16 }}>
+              <Text style={{ fontSize: 14, fontWeight: '500', color: '#374151', marginBottom: 8 }}>
+                GST Number <Text style={{ color: '#EF4444' }}> *</Text>
+              </Text>
+              <TextInput
+                value={formData.gst}
+                onChangeText={(text) => updateField('gst', text)}
+                placeholder="Enter GST number (e.g., 22AAAAA0000A1Z5)"
+                autoCapitalize="characters"
+                style={{
+                  width: '100%',
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  backgroundColor: 'white',
+                  borderRadius: 8,
+                  fontSize: 16,
+                  borderWidth: 1,
+                  borderColor: errors.gst ? '#FCA5A5' : '#E5E7EB'
+                }}
+              />
+              {errors.gst && (
+                <Text style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.gst}</Text>
+              )}
             </View>
 
             {/* Default Address Toggle */}
-            <View className="mt-4">
+            <View style={{ marginTop: 16 }}>
               <TouchableOpacity
                 onPress={() => updateField('isDefault', !formData.isDefault)}
-                className="flex-row items-center"
+                style={{ flexDirection: 'row', alignItems: 'center' }}
               >
-                <View className={`w-5 h-5 rounded border-2 mr-3 ${formData.isDefault ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`}>
+                <View style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 4,
+                  borderWidth: 2,
+                  marginRight: 12,
+                  backgroundColor: formData.isDefault ? '#3B82F6' : 'transparent',
+                  borderColor: formData.isDefault ? '#3B82F6' : '#D1D5DB',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
                   {formData.isDefault && (
-                    <Feather name="check" size={12} color="white" style={{ alignSelf: 'center', marginTop: 1 }} />
+                    <Feather name="check" size={12} color="white" />
                   )}
                 </View>
-                <Text className="text-base text-gray-700">Set as default address</Text>
+                <Text style={{ fontSize: 16, color: '#374151' }}>Set as default address</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
         {/* Bottom Padding */}
-        <View className="h-8" />
+        <View style={{ height: 32 }} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

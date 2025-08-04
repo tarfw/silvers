@@ -420,7 +420,7 @@ export const MonetaryValidator = {
     }
     
     if (amount >= 1000000) {
-      errors.push('Amount must be less than $1,000,000.00');
+      errors.push('Amount must be less than ₹1,000,000.00');
     }
     
     if (!MonetaryValidator.validatePrecision(amount)) {

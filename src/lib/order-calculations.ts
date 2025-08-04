@@ -221,11 +221,11 @@ export function updateItemQuantity(
 /**
  * Format currency for display
  */
-export function formatCurrency(amount: number | null | undefined, currency = 'USD'): string {
+export function formatCurrency(amount: number | null | undefined, currency = 'INR'): string {
   // Handle null, undefined, or NaN values
   const safeAmount = typeof amount === 'number' && !isNaN(amount) ? amount : 0;
   
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,
