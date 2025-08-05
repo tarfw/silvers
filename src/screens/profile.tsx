@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Alert, ScrollView, KeyboardAvoidingView, Platform, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../lib/auth-context';
@@ -139,6 +139,27 @@ export default function ProfileScreen({ onClose, onNavigateToAddresses, onNaviga
     setIsEditing(false);
   };
 
+  const handleWhatsAppSupport = () => {
+    const phoneNumber = '+1234567890'; // Replace with your WhatsApp business number
+    const message = 'Hi! I need help with my order.';
+    const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+    
+    Linking.canOpenURL(whatsappUrl)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(whatsappUrl);
+        } else {
+          // Fallback to web WhatsApp
+          const webWhatsappUrl = `https://wa.me/${phoneNumber.replace('+', '')}?text=${encodeURIComponent(message)}`;
+          return Linking.openURL(webWhatsappUrl);
+        }
+      })
+      .catch((error) => {
+        console.error('Error opening WhatsApp:', error);
+        Alert.alert('Error', 'Unable to open WhatsApp. Please make sure WhatsApp is installed.');
+      });
+  };
+
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Minimal Header */}
@@ -229,6 +250,23 @@ export default function ProfileScreen({ onClose, onNavigateToAddresses, onNaviga
               <View className="flex-1">
                 <Text className="text-lg font-medium text-gray-900">Delivery Addresses</Text>
                 <Text className="text-gray-500">Manage shipping addresses</Text>
+              </View>
+              <Feather name="chevron-right" size={20} color="#D1D5DB" />
+            </View>
+          </TouchableOpacity>
+
+          {/* Help and Support Card */}
+          <TouchableOpacity
+            onPress={handleWhatsAppSupport}
+            className="bg-white rounded-2xl p-6 mb-4 shadow-sm"
+          >
+            <View className="flex-row items-center">
+              <View className="w-12 h-12 bg-emerald-100 rounded-2xl items-center justify-center mr-4">
+                <Feather name="message-circle" size={20} color="#059669" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-lg font-medium text-gray-900">Help & Support</Text>
+                <Text className="text-gray-500">Chat with us on WhatsApp</Text>
               </View>
               <Feather name="chevron-right" size={20} color="#D1D5DB" />
             </View>

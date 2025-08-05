@@ -160,17 +160,18 @@ export default function CollectionsScreen({ onClose }: CollectionsScreenProps) {
                 style={{
                   backgroundColor: '#fff',
                   paddingHorizontal: 16,
-                  paddingVertical: 12,
+                  paddingVertical: 16,
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  {/* Collection Image */}
+                  {/* Collection Image - Much Bigger */}
                   <View style={{
-                    width: 48,
-                    height: 48,
+                    width: 80,
+                    height: 80,
                     backgroundColor: '#F3F4F6',
-                    marginRight: 12,
+                    marginRight: 16,
                     overflow: 'hidden',
+                    borderRadius: 8,
                   }}>
                     {collection.image ? (
                       <R2Image
@@ -184,46 +185,44 @@ export default function CollectionsScreen({ onClose }: CollectionsScreenProps) {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                        <MaterialIcons name="collections" size={24} color="#9CA3AF" />
+                        <MaterialIcons name="collections" size={36} color="#9CA3AF" />
                       </View>
                     )}
                   </View>
 
                   {/* Collection Info */}
                   <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                    <View style={{ marginBottom: 6 }}>
                       <Text style={{
-                        fontSize: 18,
-                        fontWeight: '500',
+                        fontSize: 22,
+                        fontWeight: '600',
                         color: '#111827',
-                        flex: 1,
-                      }} numberOfLines={1}>
+                        lineHeight: 28,
+                      }} numberOfLines={2}>
                         {collection.name}
                       </Text>
                     </View>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <View>
-                        {collection.description && (
-                          <Text style={{
-                            color: '#6B7280',
-                            fontSize: 14,
-                            marginBottom: 2,
-                          }} numberOfLines={1}>
-                            {collection.description}
-                          </Text>
-                        )}
+                    <View>
+                      {collection.description && (
                         <Text style={{
-                          color: '#9CA3AF',
-                          fontSize: 12,
-                        }}>
-                          {(collection as any).products?.length || 0} product{((collection as any).products?.length || 0) !== 1 ? 's' : ''}
+                          color: '#6B7280',
+                          fontSize: 15,
+                          marginBottom: 4,
+                          lineHeight: 20,
+                        }} numberOfLines={2}>
+                          {collection.description}
                         </Text>
-                      </View>
+                      )}
+                      <Text style={{
+                        color: '#9CA3AF',
+                        fontSize: 13,
+                        fontWeight: '500',
+                      }}>
+                        {(collection as any).products?.length || 0} product{((collection as any).products?.length || 0) !== 1 ? 's' : ''}
+                      </Text>
                     </View>
                   </View>
-
-
                 </View>
               </TouchableOpacity>
             )}

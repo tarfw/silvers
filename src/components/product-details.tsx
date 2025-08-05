@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Dimensions, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { formatCurrency, db } from '../lib/instant';
 import { useCart } from '../lib/cart-context';
 import { useFavorites } from '../hooks/useFavorites';
+import { useToast } from './ui/toast';
 import R2Image from './ui/r2-image';
+import ZoomableImage from './ui/zoomable-image';
 import QuantitySelector from './ui/qty';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -24,6 +26,7 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
   const insets = useSafeAreaInsets();
   const { addItem } = useCart();
   const { isFavorited, toggleFavorite, isLoading: favoritesLoading } = useFavorites();
+  const { showToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -42,7 +45,67 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
     }
   });
 
+  // Query product with relationships (brand, vendor, type)
+  const { data: productData } = db.useQuery({
+    products: {
+      $: {
+        where: {
+          id: product.id
+        }
+      }
+    }
+  });
+
+  // Get the product with full data
+  const fullProduct = productData?.products?.[0] || product;
+
+  // Query brand if brandId exists
+  const { data: brandData } = db.useQuery(
+    fullProduct.brandId ? {
+      brands: {
+        $: {
+          where: {
+            id: fullProduct.brandId
+          }
+        }
+      }
+    } : null
+  );
+
+  // Query vendor if vendorId exists
+  const { data: vendorData } = db.useQuery(
+    fullProduct.vendorId ? {
+      vendors: {
+        $: {
+          where: {
+            id: fullProduct.vendorId
+          }
+        }
+      }
+    } : null
+  );
+
+  // Query type if typeId exists
+  const { data: typeData } = db.useQuery(
+    fullProduct.typeId ? {
+      types: {
+        $: {
+          where: {
+            id: fullProduct.typeId
+          }
+        }
+      }
+    } : null
+  );
+
   const items = itemData?.items || [];
+  
+  // Get brand, vendor, and type names from separate queries
+  const brandName = brandData?.brands?.[0]?.name;
+  const vendorName = vendorData?.vendors?.[0]?.name;
+  const typeName = typeData?.types?.[0]?.name;
+
+
 
   // Extract product options from items
   const productOptions: ProductOption[] = React.useMemo(() => {
@@ -97,20 +160,34 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
       return;
     }
 
-    // Find item that matches selected options
+    // Find item that matches ALL selected options exactly
     const matchingItem = items.find(item => {
-      const option1Match = !selectedOptions.Size || item.option1 === selectedOptions.Size;
-      const option2Match = !selectedOptions.Color || item.option2 === selectedOptions.Color;
-      const option3Match = !selectedOptions.Material || item.option3 === selectedOptions.Material;
-      return option1Match && option2Match && option3Match;
+      // Get the option names and their corresponding item properties
+      const optionMappings = {
+        'Size': 'option1',
+        'Color': 'option2', 
+        'Material': 'option3'
+      };
+
+      // Check if all selected options match the item
+      return Object.entries(selectedOptions).every(([optionName, selectedValue]) => {
+        const itemProperty = optionMappings[optionName as keyof typeof optionMappings];
+        if (!itemProperty) return true; // Skip unknown options
+        return item[itemProperty] === selectedValue;
+      });
     });
 
+    console.log('Selected options:', selectedOptions);
+    console.log('Matching item:', matchingItem);
     setSelectedItem(matchingItem || items[0]);
   }, [selectedOptions, items, productOptions]);
 
   // Auto-select first option for each category if none selected
   useEffect(() => {
+    if (productOptions.length === 0) return;
+    
     const newSelectedOptions: Record<string, string> = {};
+    
     productOptions.forEach(option => {
       if (!selectedOptions[option.name] && option.values.length > 0) {
         newSelectedOptions[option.name] = option.values[0];
@@ -118,6 +195,7 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
     });
     
     if (Object.keys(newSelectedOptions).length > 0) {
+      console.log('Auto-selecting options:', newSelectedOptions);
       setSelectedOptions(prev => ({ ...prev, ...newSelectedOptions }));
     }
   }, [productOptions]);
@@ -129,9 +207,33 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
     }));
   };
 
+  // Calculate current price and discount based on selected item
+  const currentPrice = selectedItem?.price || product.price || 0;
+  const salePrice = selectedItem?.saleprice || product.saleprice;
+  const hasDiscount = salePrice && salePrice > 0 && salePrice < currentPrice;
+  const displayPrice = hasDiscount ? salePrice : currentPrice;
+
+  // Debug logging for price updates
+  useEffect(() => {
+    console.log('Price update:', {
+      selectedItem: selectedItem?.id,
+      selectedItemPrice: selectedItem?.price,
+      selectedItemSalePrice: selectedItem?.saleprice,
+      productPrice: product.price,
+      currentPrice,
+      salePrice,
+      hasDiscount,
+      displayPrice
+    });
+  }, [selectedItem, currentPrice, salePrice, hasDiscount, displayPrice]);
+
   const handleAddToCart = async () => {
     if (!selectedItem) {
-      Alert.alert('Error', 'Please select product options');
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Please select product options'
+      });
       return;
     }
 
@@ -141,34 +243,34 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
         productId: product.id,
         itemId: selectedItem.id,
         title: product.title,
-        price: selectedItem.price || product.price || 0,
+        price: displayPrice, // Use the display price (sale price if available)
         quantity: quantity,
         sku: selectedItem.sku || product.sku || '',
         image: product.image,
         options: selectedOptions
       });
 
-      Alert.alert(
-        'Added to Cart',
-        `${product.title} has been added to your cart`,
-        [
-          { text: 'Continue Shopping', onPress: () => onClose() },
-          { text: 'View Cart', onPress: () => {
-            // You can add navigation to cart here if needed
-            onClose();
-          }}
-        ]
-      );
+      showToast({
+        type: 'success',
+        title: 'Added to Cart',
+        message: `${product.title} has been added to your cart`,
+        duration: 3000
+      });
+      
+      // Close the product details after a short delay to let user see the toast
+      setTimeout(() => {
+        onClose();
+      }, 500);
     } catch (error) {
-      Alert.alert('Error', 'Failed to add item to cart');
+      showToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to add item to cart'
+      });
     } finally {
       setIsLoading(false);
     }
   };
-
-  const currentPrice = selectedItem?.price || product.price || 0;
-  const salePrice = selectedItem?.saleprice || product.saleprice;
-  const hasDiscount = salePrice && salePrice < currentPrice;
 
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
@@ -197,18 +299,26 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
       </View>
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Product Image */}
-        <View className="bg-gray-50" style={{ height: screenWidth }}>
+        {/* Product Image - Zoomable */}
+        <View className="bg-gray-50 relative" style={{ height: screenWidth }}>
           {product.image ? (
-            <R2Image
-              url={product.image}
-              style={{ width: '100%', height: '100%' }}
-              fallback={
-                <View className="w-full h-full bg-gray-100 items-center justify-center">
-                  <MaterialCommunityIcons name="diamond-stone" size={64} color="#9CA3AF" />
-                </View>
-              }
-            />
+            <>
+              <ZoomableImage
+                url={product.image}
+                style={{ width: '100%', height: '100%' }}
+                maxZoom={4}
+                minZoom={1}
+                fallback={
+                  <View className="w-full h-full bg-gray-100 items-center justify-center">
+                    <MaterialCommunityIcons name="diamond-stone" size={64} color="#9CA3AF" />
+                  </View>
+                }
+              />
+              {/* Touch gesture hint */}
+              <View className="absolute top-4 right-4 bg-black/60 rounded-lg px-3 py-2">
+                <Text className="text-white text-xs font-medium">Pinch to zoom</Text>
+              </View>
+            </>
           ) : (
             <View className="w-full h-full bg-gray-100 items-center justify-center">
               <MaterialCommunityIcons name="diamond-stone" size={64} color="#9CA3AF" />
@@ -224,30 +334,144 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
               {product.title}
             </Text>
             
-            <View className="flex-row items-center">
-              {hasDiscount ? (
-                <>
-                  <Text className="text-2xl font-bold text-red-600 mr-3">
-                    {formatCurrency(salePrice)}
+            {/* Only show price if it's greater than 0 */}
+            {displayPrice > 0 && (
+              <View className="flex-row items-center">
+                {!selectedItem ? (
+                  <Text className="text-2xl font-bold text-gray-400">
+                    Select options to see price
                   </Text>
-                  <Text className="text-lg text-gray-500 line-through">
-                    {formatCurrency(currentPrice)}
+                ) : hasDiscount ? (
+                  <>
+                    <Text className="text-2xl font-bold text-red-600 mr-3">
+                      {formatCurrency(salePrice)}
+                    </Text>
+                    <Text className="text-lg text-gray-500 line-through">
+                      {formatCurrency(currentPrice)}
+                    </Text>
+                    <View className="ml-2 bg-red-100 px-2 py-1 rounded">
+                      <Text className="text-red-600 text-xs font-medium">
+                        SALE
+                      </Text>
+                    </View>
+                  </>
+                ) : (
+                  <Text className="text-2xl font-bold text-gray-900">
+                    {formatCurrency(displayPrice)}
                   </Text>
-                </>
-              ) : (
-                <Text className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(currentPrice)}
-                </Text>
-              )}
-            </View>
+                )}
+              </View>
+            )}
+
           </View>
 
-          {/* Product Description */}
-          {(product.description || product.excerpt) && (
+          {/* Brand and Vendor */}
+          {(brandName || vendorName) && (
             <View className="mb-6">
-              <Text className="text-base text-gray-700 leading-6">
-                {product.description || product.excerpt}
+              <View className="flex-row items-center space-x-4">
+                {brandName && (
+                  <View className="flex-1">
+                    <Text className="text-xs text-gray-500 uppercase tracking-wide mb-1">Brand</Text>
+                    <Text className="text-base font-semibold text-gray-900">
+                      {brandName}
+                    </Text>
+                  </View>
+                )}
+                {vendorName && (
+                  <View className="flex-1">
+                    <Text className="text-xs text-gray-500 uppercase tracking-wide mb-1">Vendor</Text>
+                    <Text className="text-base font-semibold text-gray-900">
+                      {vendorName}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+
+          {/* Product Information */}
+          {(typeName || fullProduct.sku || selectedItem?.sku) && (
+            <View className="mb-6">
+              <Text className="text-lg font-semibold text-gray-900 mb-3">
+                Product Information
               </Text>
+              <View className="space-y-3">
+                {typeName && (
+                  <View className="flex-row items-center py-2">
+                    <Text className="text-sm font-medium text-gray-600 w-24">Type:</Text>
+                    <Text className="text-sm text-gray-900 flex-1">{typeName}</Text>
+                  </View>
+                )}
+                {(selectedItem?.sku || fullProduct.sku) && (
+                  <View className="flex-row items-center py-2">
+                    <Text className="text-sm font-medium text-gray-600 w-24">SKU:</Text>
+                    <Text className="text-sm text-gray-900 flex-1 font-mono">
+                      {selectedItem?.sku || fullProduct.sku}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+
+          {/* Product Description */}
+          {(fullProduct.description || fullProduct.excerpt) && (
+            <View className="mb-6">
+              <Text className="text-lg font-semibold text-gray-900 mb-3">
+                Description
+              </Text>
+              <Text className="text-base text-gray-700 leading-6">
+                {fullProduct.description || fullProduct.excerpt}
+              </Text>
+            </View>
+          )}
+
+          {/* Metafields */}
+          {fullProduct.metafields && Object.keys(fullProduct.metafields).length > 0 && (
+            <View className="mb-6">
+              <Text className="text-lg font-semibold text-gray-900 mb-3">
+                Additional Information
+              </Text>
+              <View className="space-y-3">
+                {Object.entries(fullProduct.metafields).map(([key, value]) => {
+                  // Format the key to be more readable
+                  const formattedKey = key
+                    .replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, str => str.toUpperCase())
+                    .replace(/_/g, ' ');
+
+                  // Extract the actual value from metafield structure
+                  let displayValue: string;
+                  
+                  if (value === null || value === undefined) {
+                    displayValue = 'N/A';
+                  } else if (typeof value === 'object' && value !== null) {
+                    // Handle metafield object structure like { type: "single_line_text", group: "General", value: "50" }
+                    if ('value' in value) {
+                      displayValue = String(value.value);
+                    } else if (Array.isArray(value)) {
+                      displayValue = value.join(', ');
+                    } else {
+                      displayValue = JSON.stringify(value);
+                    }
+                  } else if (typeof value === 'boolean') {
+                    displayValue = value ? 'Yes' : 'No';
+                  } else {
+                    displayValue = String(value);
+                  }
+
+                  return (
+                    <View key={key} className="flex-row items-center py-2">
+                      <Text className="text-sm font-medium text-gray-600 w-24">
+                        {formattedKey}:
+                      </Text>
+                      <Text className="text-sm text-gray-900 flex-1 ml-2">
+                        {displayValue}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
             </View>
           )}
 
@@ -307,13 +531,15 @@ export default function ProductDetailsScreen({ product, onClose }: ProductDetail
       >
         <TouchableOpacity
           onPress={handleAddToCart}
-          disabled={isLoading}
+          disabled={isLoading || !selectedItem}
           className={`py-4 rounded-lg items-center ${
-            isLoading ? 'bg-gray-400' : 'bg-blue-600'
+            isLoading || !selectedItem ? 'bg-gray-400' : 'bg-blue-600'
           }`}
         >
           <Text className="text-white font-semibold text-lg">
-            {isLoading ? 'Adding...' : `Add to Cart • ${formatCurrency(currentPrice * quantity)}`}
+            {isLoading ? 'Adding...' : 
+             !selectedItem ? 'Select Options' :
+             displayPrice > 0 ? `Add to Cart • ${formatCurrency(displayPrice * quantity)}` : 'Add to Cart'}
           </Text>
         </TouchableOpacity>
       </View>

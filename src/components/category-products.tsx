@@ -53,6 +53,7 @@ export default function CategoryProductsScreen({
     { id: 'bracelets', name: 'Bracelets', image: require('../../assets/categories/bracelets.webp') },
     { id: 'necklaces', name: 'Necklaces', image: require('../../assets/categories/necklace.webp') },
     { id: 'hipchains', name: 'Hipchains', image: require('../../assets/categories/waistchain.webp') },
+    { id: 'vessels', name: 'Vessels', image: require('../../assets/categories/vessels.png') },
     { id: 'earrings', name: 'Earrings', image: require('../../assets/categories/earings.webp') },
     { id: 'noserings', name: 'Nose rings', image: require('../../assets/categories/nose.jpg') },
     { id: 'chuttis', name: 'Chuttis', image: require('../../assets/categories/head2.jpg') }
@@ -119,7 +120,7 @@ export default function CategoryProductsScreen({
         <View className="bg-[#378388] rounded-2xl p-6 shadow-sm">
           {/* Category Image and Info */}
           <View className="items-center mb-4">
-            <View className="w-24 h-24 rounded-2xl overflow-hidden mb-3 bg-white/20">
+            <View className="w-24 h-24 rounded-2xl overflow-hidden mb-3 bg-white">
               {currentCategory.image ? (
                 <Image
                   source={currentCategory.image}
@@ -127,8 +128,8 @@ export default function CategoryProductsScreen({
                   contentFit="cover"
                 />
               ) : (
-                <View className="w-full h-full bg-white/20 items-center justify-center">
-                  <MaterialCommunityIcons name="diamond-stone" size={36} color="white" />
+                <View className="w-full h-full bg-white items-center justify-center">
+                  <MaterialCommunityIcons name="diamond-stone" size={36} color="#378388" />
                 </View>
               )}
             </View>

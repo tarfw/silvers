@@ -96,9 +96,11 @@ export default function CartScreen({ onClose, onCheckout }: CartScreenProps) {
           )}
           
           <View className="flex-row items-center justify-between mt-2">
-            <Text className="text-lg font-semibold text-gray-900">
-              {formatCurrency(item.price)}
-            </Text>
+            {item.price > 0 && (
+              <Text className="text-lg font-semibold text-gray-900">
+                {formatCurrency(item.price)}
+              </Text>
+            )}
             
             {/* Quantity Controls */}
             <View className="flex-row items-center">
@@ -183,14 +185,18 @@ export default function CartScreen({ onClose, onCheckout }: CartScreenProps) {
           {/* Order Summary */}
           <View className="bg-white p-4 border-t border-gray-200">
             <View className="space-y-2 mb-4">
-              <View className="flex-row justify-between">
-                <Text className="text-gray-600">Subtotal</Text>
-                <Text className="text-gray-900">{formatCurrency(totals.subtotal)}</Text>
-              </View>
-              <View className="flex-row justify-between">
-                <Text className="text-gray-600">Tax</Text>
-                <Text className="text-gray-900">{formatCurrency(totals.tax)}</Text>
-              </View>
+              {totals.subtotal > 0 && (
+                <View className="flex-row justify-between">
+                  <Text className="text-gray-600">Subtotal</Text>
+                  <Text className="text-gray-900">{formatCurrency(totals.subtotal)}</Text>
+                </View>
+              )}
+              {totals.tax > 0 && (
+                <View className="flex-row justify-between">
+                  <Text className="text-gray-600">Tax</Text>
+                  <Text className="text-gray-900">{formatCurrency(totals.tax)}</Text>
+                </View>
+              )}
               {totals.shipping > 0 && (
                 <View className="flex-row justify-between">
                   <Text className="text-gray-600">Shipping</Text>
@@ -203,10 +209,12 @@ export default function CartScreen({ onClose, onCheckout }: CartScreenProps) {
                   <Text className="text-green-600">-{formatCurrency(totals.discount)}</Text>
                 </View>
               )}
-              <View className="flex-row justify-between border-t border-gray-200 pt-2">
-                <Text className="text-lg font-semibold text-gray-900">Total</Text>
-                <Text className="text-lg font-semibold text-gray-900">{formatCurrency(totals.total)}</Text>
-              </View>
+              {totals.total > 0 && (
+                <View className="flex-row justify-between border-t border-gray-200 pt-2">
+                  <Text className="text-lg font-semibold text-gray-900">Total</Text>
+                  <Text className="text-lg font-semibold text-gray-900">{formatCurrency(totals.total)}</Text>
+                </View>
+              )}
             </View>
 
             <TouchableOpacity

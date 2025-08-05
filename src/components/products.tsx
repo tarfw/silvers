@@ -71,6 +71,7 @@ export default function ProductsScreen({ onClose, onNavigateToCart, onNavigateTo
     { id: 'bracelets', name: 'Bracelets', image: require('../../assets/categories/bracelets.webp') },
     { id: 'necklaces', name: 'Necklaces', image: require('../../assets/categories/necklace.webp') },
     { id: 'hipchains', name: 'Hipchains', image: require('../../assets/categories/waistchain.webp') },
+    { id: 'vessels', name: 'Vessels', image: require('../../assets/categories/vessels.png') },
     { id: 'earrings', name: 'Earrings', image: require('../../assets/categories/earings.webp') },
     { id: 'noserings', name: 'Nose rings', image: require('../../assets/categories/nose.jpg') },
     { id: 'chuttis', name: 'Chuttis', image: require('../../assets/categories/head2.jpg') }

@@ -67,7 +67,7 @@ export default function ProductGrid({
     return (
       <View className="justify-center items-center py-20 px-8">
         <View className="items-center">
-          <View className="w-24 h-24 bg-silver-100 items-center justify-center mb-6 rounded-3xl">
+          <View className="w-24 h-24 bg-white items-center justify-center mb-6 rounded-3xl border border-gray-200">
             <MaterialCommunityIcons name="diamond-stone" size={40} color="#378388" />
           </View>
           <Text className="text-xl font-semibold text-gray-900 mb-3 text-center">
@@ -189,7 +189,7 @@ export function EmptyProductGrid({
   return (
     <View className="justify-center items-center py-20 px-8">
       <View className="items-center">
-        <View className="w-24 h-24 bg-silver-100 items-center justify-center mb-6 rounded-3xl">
+        <View className="w-24 h-24 bg-white items-center justify-center mb-6 rounded-3xl border border-gray-200">
           <MaterialCommunityIcons name="diamond-stone" size={40} color="#378388" />
         </View>
         <Text className="text-xl font-semibold text-gray-900 mb-3 text-center">

@@ -282,29 +282,39 @@ export default function CheckoutScreen({
                   )}
                   <Text className="text-sm text-gray-500">Qty: {item.quantity}</Text>
                 </View>
-                <Text className="text-base font-medium text-gray-900">
-                  {formatCurrency(item.total)}
-                </Text>
+                {item.total > 0 && (
+                  <Text className="text-base font-medium text-gray-900">
+                    {formatCurrency(item.total)}
+                  </Text>
+                )}
               </View>
             ))}
 
             <View className="border-t border-gray-200 mt-4 pt-4">
-              <View className="flex-row justify-between py-1">
-                <Text className="text-gray-600">Subtotal</Text>
-                <Text className="text-gray-900">{formatCurrency(totals.subtotal)}</Text>
-              </View>
-              <View className="flex-row justify-between py-1">
-                <Text className="text-gray-600">Tax</Text>
-                <Text className="text-gray-900">{formatCurrency(totals.tax)}</Text>
-              </View>
-              <View className="flex-row justify-between py-1">
-                <Text className="text-gray-600">Shipping</Text>
-                <Text className="text-gray-900">{formatCurrency(totals.shipping)}</Text>
-              </View>
-              <View className="flex-row justify-between py-2 border-t border-gray-200 mt-2">
-                <Text className="text-lg font-semibold text-gray-900">Total</Text>
-                <Text className="text-lg font-bold text-gray-900">{formatCurrency(totals.total)}</Text>
-              </View>
+              {totals.subtotal > 0 && (
+                <View className="flex-row justify-between py-1">
+                  <Text className="text-gray-600">Subtotal</Text>
+                  <Text className="text-gray-900">{formatCurrency(totals.subtotal)}</Text>
+                </View>
+              )}
+              {totals.tax > 0 && (
+                <View className="flex-row justify-between py-1">
+                  <Text className="text-gray-600">Tax</Text>
+                  <Text className="text-gray-900">{formatCurrency(totals.tax)}</Text>
+                </View>
+              )}
+              {totals.shipping > 0 && (
+                <View className="flex-row justify-between py-1">
+                  <Text className="text-gray-600">Shipping</Text>
+                  <Text className="text-gray-900">{formatCurrency(totals.shipping)}</Text>
+                </View>
+              )}
+              {totals.total > 0 && (
+                <View className="flex-row justify-between py-2 border-t border-gray-200 mt-2">
+                  <Text className="text-lg font-semibold text-gray-900">Total</Text>
+                  <Text className="text-lg font-bold text-gray-900">{formatCurrency(totals.total)}</Text>
+                </View>
+              )}
             </View>
           </View>
 
@@ -336,7 +346,8 @@ export default function CheckoutScreen({
           <Text className={`text-center font-semibold text-lg ${
             isLoading || !selectedAddress ? 'text-gray-500' : 'text-white'
           }`}>
-            {isLoading ? 'Placing Order...' : `Place Order • ${formatCurrency(totals.total)}`}
+            {isLoading ? 'Placing Order...' : 
+             totals.total > 0 ? `Place Order • ${formatCurrency(totals.total)}` : 'Place Order'}
           </Text>
         </TouchableOpacity>
       </View>

@@ -112,15 +112,17 @@ function CategoryCard({
     >
       <View className="items-center">
         {/* Image container with rounded corners */}
-        <View className="w-16 h-16 rounded-2xl overflow-hidden mb-3 bg-silver-100">
+        <View className="w-16 h-16 rounded-2xl overflow-hidden mb-3 bg-white">
           {imageUrl ? (
-            <Image
-              source={imageUrl}
-              style={{ width: '100%', height: '100%' }}
-              contentFit="cover"
-            />
+            <View className="w-full h-full bg-white items-center justify-center">
+              <Image
+                source={imageUrl}
+                style={{ width: '100%', height: '100%' }}
+                contentFit="contain"
+              />
+            </View>
           ) : (
-            <View className="w-full h-full bg-silver-100 items-center justify-center">
+            <View className="w-full h-full bg-white items-center justify-center">
               <MaterialCommunityIcons name={icon as any} size={28} color="#378388" />
             </View>
           )}

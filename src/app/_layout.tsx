@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ErrorBoundary from "../components/ui/error-boundary";
 import { AuthProvider } from "../lib/auth-context";
 import { CartProvider } from "../lib/cart-context";
+import { ToastProvider } from "../components/ui/toast";
 
 export default function Layout() {
   return (
@@ -12,9 +13,11 @@ export default function Layout() {
       <SafeAreaProvider>
         <AuthProvider>
           <CartProvider>
-            <ErrorBoundary>
-              <Slot />
-            </ErrorBoundary>
+            <ToastProvider>
+              <ErrorBoundary>
+                <Slot />
+              </ErrorBoundary>
+            </ToastProvider>
           </CartProvider>
         </AuthProvider>
       </SafeAreaProvider>
